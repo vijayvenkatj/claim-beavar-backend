@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AutoClaimDetail {
+  id                 String  @id
+  claimId            String  @unique
+  vehicleType        String
+  damageDescription  String
+  repairEstimate     Decimal
+  accidentLocation   String?
+  policeReportNumber String?
+  otherPartyDetails  Json?
+  Claim              Claim   @relation(fields: [claimId], references: [id])
+}
+
+model Claim {
+  id                   String                @id
+  policyHolderId       String
+  policyId             String
+  claimType            InsuranceType
+  status               ClaimStatus           @default(SUBMITTED)
+  submissionDate       DateTime              @default(now())
+  incidentDate         DateTime
+  estimatedLoss        Decimal
+  actualLoss           Decimal?
+  complexity           ClaimComplexity       @default(SIMPLE)
+  AutoClaimDetail      AutoClaimDetail?
+  PolicyHolder         PolicyHolder          @relation(fields: [policyHolderId], references: [id])
+  InsurancePolicy      InsurancePolicy       @relation(fields: [policyId], references: [id])
+  ClaimAssessment      ClaimAssessment[]
+  ClaimDocument        ClaimDocument[]
+  HealthClaimDetail    HealthClaimDetail?
+  HomeClaimDetail      HomeClaimDetail?
+  LiabilityClaimDetail LiabilityClaimDetail?
+}
+
+model ClaimAssessment {
+  id                String   @id
+  claimId           String
+  assessorName      String
+  assessmentDate    DateTime @default(now())
+  assessmentNotes   String?
+  recommendedAction String
+  additionalReview  Boolean  @default(false)
+  Claim             Claim    @relation(fields: [claimId], references: [id])
+}
+
+model ClaimDocument {
+  id           String   @id
+  claimId      String
+  documentType String
+  documentPath String
+  uploadDate   DateTime @default(now())
+  documentHash String?
+  Claim        Claim    @relation(fields: [claimId], references: [id])
+}
+
+model ContactInfo {
+  id               String        @id
+  policyHolderId   String?       @unique
+  email            String
+  phoneNumber      String
+  address          String
+  alternateContact String?
+  PolicyHolder     PolicyHolder? @relation(fields: [policyHolderId], references: [id])
+}
+
+model HealthClaimDetail {
+  id              String  @id
+  claimId         String  @unique
+  treatmentType   String
+  medicalProvider String
+  diagnosisCode   String?
+  treatmentCost   Decimal
+  coverageDetails Json?
+  Claim           Claim   @relation(fields: [claimId], references: [id])
+}
+
+model HomeClaimDetail {
+  id                  String  @id
+  claimId             String  @unique
+  propertyType        String
+  damageType          String
+  estimatedRepairCost Decimal
+  causeOfDamage       String
+  additionalDetails   Json?
+  Claim               Claim   @relation(fields: [claimId], references: [id])
+}
+
+model InsurancePolicy {
+  id                 String         @id
+  policyNumber       String         @unique
+  insuranceProvider  String
+  policyType         InsuranceType
+  coverageStartDate  DateTime
+  coverageEndDate    DateTime
+  totalCoverageLimit Decimal
+  annualPremium      Decimal
+  policyDetails      Json?
+  Claim              Claim[]
+  PolicyHolder       PolicyHolder[]
+}
+
+model LiabilityClaimDetail {
+  id               String   @id
+  claimId          String   @unique
+  incidentType     String
+  thirdPartyDamage Decimal
+  legalCosts       Decimal?
+  liabilityReason  String
+  Claim            Claim    @relation(fields: [claimId], references: [id])
+}
+
+model PolicyHolder {
+  id              String            @id
+  firstName       String
+  lastName        String
+  dateOfBirth     DateTime
+  Claim           Claim[]
+  ContactInfo     ContactInfo?
+  RiskProfile     RiskProfile?
+  InsurancePolicy InsurancePolicy[]
+}
+
+model RiskProfile {
+  id               String       @id
+  policyHolderId   String       @unique
+  riskLevel        RiskLevel    @default(MEDIUM)
+  riskFactors      Json?
+  historicalClaims Int          @default(0)
+  totalClaimAmount Decimal      @default(0)
+  PolicyHolder     PolicyHolder @relation(fields: [policyHolderId], references: [id])
+}
+
+enum ClaimComplexity {
+  SIMPLE
+  MODERATE
+  COMPLEX
+  HIGHLY_COMPLEX
+}
+
+enum ClaimStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  DENIED
+  PARTIALLY_APPROVED
+  PENDING_ADDITIONAL_INFO
+  ESCALATED
+}
+
+enum InsuranceType {
+  HEALTH
+  AUTO
+  HOME
+  LIFE
+  PROPERTY
+  LIABILITY
+  TRAVEL
+  DISABILITY
+  WORKERS_COMPENSATION
+  CYBER
+  MARINE
+  AGRICULTURAL
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
