@@ -61,6 +61,7 @@ export const update_claim = async(claimId: string) => {
                 status: ClaimAssessment.recommendedAction
             }
         })
+        console.log(`Claim Assessment updated for claim ID: ${ClaimAssessment.claimId}`);
     }
     catch (error) {
         console.error(`Error updating claim assessment: ${error}`);
