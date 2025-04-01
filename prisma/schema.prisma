@@ -30,6 +30,7 @@ model Claim {
   estimatedLoss        Decimal
   actualLoss           Decimal?
   complexity           ClaimComplexity       @default(SIMPLE)
+  claimDetails         String?               @default("")
   AutoClaimDetail      AutoClaimDetail?
   PolicyHolder         PolicyHolder          @relation(fields: [policyHolderId], references: [id])
   InsurancePolicy      InsurancePolicy       @relation(fields: [policyId], references: [id])
@@ -104,7 +105,7 @@ model InsurancePolicy {
   annualPremium      Decimal
   policyDetails      Json?
   Claim              Claim[]
-  PolicyHolder       PolicyHolder[]
+  PolicyHolder       PolicyHolder[] @relation("InsurancePolicyToPolicyHolder")
 }
 
 model LiabilityClaimDetail {
@@ -125,7 +126,7 @@ model PolicyHolder {
   Claim           Claim[]
   ContactInfo     ContactInfo?
   RiskProfile     RiskProfile?
-  InsurancePolicy InsurancePolicy[]
+  InsurancePolicy InsurancePolicy[] @relation("InsurancePolicyToPolicyHolder")
 }
 
 model RiskProfile {

@@ -52,6 +52,7 @@ export const ClaimSchema = z.object({
   submissionDate: z.date().default(new Date()),
   incidentDate: z.date(),
   estimatedLoss: z.number(),
+  claimDetails: z.string().optional(),
   actualLoss: z.number().optional(),
   complexity: ClaimComplexity
 });
@@ -109,9 +110,9 @@ export const ClaimAssessmentSchema = z.object({
   id: z.string(),
   claimId: z.string(),
   assessorName: z.string(),
-  assessmentDate: z.date().default(new Date()),
+  assessmentDate: z.coerce.date().default(new Date()),
   assessmentNotes: z.string().optional(),
-  recommendedAction: z.string(),
+  recommendedAction: ClaimStatus,
   additionalReview: z.boolean().default(false)
 });
 

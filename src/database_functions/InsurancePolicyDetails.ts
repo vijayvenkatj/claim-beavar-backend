@@ -10,3 +10,27 @@ export const InsurancePolicyDetails = async()  => {
     }));
     return InsurancePolicies;
 }
+
+export const InsurancePolicyDetailsByClaim = async(claimId: string)  => {
+    const InsurancePolicy = await prisma.insurancePolicy.findFirst({
+        where: {
+            Claim: {
+                some: {
+                    id: claimId
+                }
+            }
+        }
+    });
+
+    if (!InsurancePolicy) {
+        throw new Error(`Insurance policy not found for claim ID: ${claimId}`);
+    }
+
+    const formattedInsurancePolicy: InsurancePolicy = {
+        ...InsurancePolicy,
+        totalCoverageLimit: InsurancePolicy.totalCoverageLimit.toNumber(),
+        annualPremium: InsurancePolicy.annualPremium.toNumber(),
+    };
+    return formattedInsurancePolicy;
+
+}
