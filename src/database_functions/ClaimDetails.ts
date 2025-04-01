@@ -36,3 +36,30 @@ export const getClaimDetailsById = async(claimId: string)  => {
     return formattedClaim;
 
 }
+
+
+export const claimSpecificDetails = async (claimId: string, claimType: string) => {
+    const modelMap: { [key: string]: any } = {
+        "AUTO": prisma.autoClaimDetail,
+        "HOME": prisma.homeClaimDetail,
+        "HEALTH": prisma.healthClaimDetail,
+        "Liability": prisma.liabilityClaimDetail,
+    };
+
+    const model = modelMap[claimType];
+    if (!model) {
+        throw new Error(`Invalid claim type: ${claimType}`);
+    }
+
+    const specificDetails = await model.findFirst({
+        where: {
+            claimId: claimId,
+        },
+    });
+
+    if (!specificDetails) {
+        return "No details"
+    }
+
+    return specificDetails;
+};
