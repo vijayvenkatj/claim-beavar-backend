@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import { UserDetails } from './database_functions/UserDetails';
 import { chatRouter } from './chat/chatRouter';
+import { claimRouter } from './claim_analysis/claimRouter';
 
 
 
@@ -15,10 +16,11 @@ app.use(express.json());
 
 
 app.get('/', async(req, res) => {
-  res.send(await UserDetails("bb9ebbaa-bf17-4d9f-a867-a3f23d30bc44"))
+  res.send("You are in the backend of Claim Beavar !")
 })
 
 app.use('/api/chat',chatRouter);
+app.use('/api/claims_update',claimRouter);
 
 
 const PORT = process.env.PORT || 5000;
