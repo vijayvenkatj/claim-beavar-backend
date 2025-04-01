@@ -11,7 +11,8 @@ export const claimRouter = express.Router();
 
 
 claimRouter.post('/', async (req, res) => {
-    console.log(req.body)
+    console.log("Request Received")
     const result = await update_claim(req.body.record.claimId);
+    console.log(result)
     res.send(result);
 });
