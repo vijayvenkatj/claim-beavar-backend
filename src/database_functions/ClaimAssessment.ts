@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { prisma } from "../utils/prisma/prisma";
 import { ClaimAssessment } from "../utils/types";
 
@@ -14,7 +15,7 @@ export const CreateClaimAssessment = async(ClaimAssessment: ClaimAssessment) => 
         }
         const createdClaimAssessment = await prisma.claimAssessment.create({
             data: {
-                id: ClaimAssessment.id,
+                id: randomUUID(),
                 claimId: ClaimAssessment.claimId,
                 assessorName: ClaimAssessment.assessorName,
                 assessmentDate: ClaimAssessment.assessmentDate,

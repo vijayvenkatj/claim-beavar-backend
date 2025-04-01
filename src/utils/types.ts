@@ -15,7 +15,7 @@ export const ClaimComplexity = z.enum(["SIMPLE", "MODERATE", "COMPLEX", "HIGHLY_
 
 // Schemas
 export const InsurancePolicySchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   policyNumber: z.string(),
   insuranceProvider: z.string(),
   policyType: InsuranceType,
@@ -27,7 +27,7 @@ export const InsurancePolicySchema = z.object({
 });
 
 export const PolicyHolderSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   firstName: z.string(),
   lastName: z.string(),
   dateOfBirth: z.date(),
@@ -35,7 +35,7 @@ export const PolicyHolderSchema = z.object({
 });
 
 export const RiskProfileSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   policyHolderId: z.string(),
   riskLevel: RiskLevel,
   riskFactors: z.any().optional(),
@@ -44,7 +44,7 @@ export const RiskProfileSchema = z.object({
 });
 
 export const ClaimSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   policyHolderId: z.string(),
   policyId: z.string(),
   claimType: InsuranceType,
@@ -58,7 +58,7 @@ export const ClaimSchema = z.object({
 });
 
 export const AutoClaimDetailSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   claimId: z.string(),
   vehicleType: z.string(),
   damageDescription: z.string(),
@@ -69,7 +69,7 @@ export const AutoClaimDetailSchema = z.object({
 });
 
 export const HomeClaimDetailSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   claimId: z.string(),
   propertyType: z.string(),
   damageType: z.string(),
@@ -79,7 +79,7 @@ export const HomeClaimDetailSchema = z.object({
 });
 
 export const HealthClaimDetailSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   claimId: z.string(),
   treatmentType: z.string(),
   medicalProvider: z.string(),
@@ -89,7 +89,7 @@ export const HealthClaimDetailSchema = z.object({
 });
 
 export const LiabilityClaimDetailSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   claimId: z.string(),
   incidentType: z.string(),
   thirdPartyDamage: z.number(),
@@ -98,7 +98,7 @@ export const LiabilityClaimDetailSchema = z.object({
 });
 
 export const ClaimDocumentSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   claimId: z.string(),
   documentType: z.string(),
   documentPath: z.string(),
@@ -107,7 +107,7 @@ export const ClaimDocumentSchema = z.object({
 });
 
 export const ClaimAssessmentSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   claimId: z.string(),
   assessorName: z.string(),
   assessmentDate: z.coerce.date().default(new Date()),
@@ -117,7 +117,7 @@ export const ClaimAssessmentSchema = z.object({
 });
 
 export const ContactInfoSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   policyHolderId: z.string().optional(),
   email: z.string().email(),
   phoneNumber: z.string(),

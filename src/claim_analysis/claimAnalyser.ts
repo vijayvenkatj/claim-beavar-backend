@@ -42,7 +42,7 @@ const assess_claim = async(claimId: string): Promise<ClaimAssessment> => {
 
     const claimData = await getClaimDetailsById(claimId);
     const userDetails = await UserDetails(claimData.policyHolderId);
-    const policyDetails = await InsurancePolicyDetailsByClaim(claimData.id);
+    const policyDetails = await InsurancePolicyDetailsByClaim(claimData?.id!);
     
     const result:ClaimAssessment = await chain.invoke({claimData, userDetails, policyDetails,format_instructions: parser.getFormatInstructions()});
     return result;
