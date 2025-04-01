@@ -10,7 +10,7 @@ app.use(express.json());
 export const claimRouter = express.Router();
 
 
-claimRouter.get('/', async (req, res) => {
+claimRouter.post('/', async (req, res) => {
     console.log(req.body)
     const result = await update_claim(req.body.record.claimId);
     res.send(result);
