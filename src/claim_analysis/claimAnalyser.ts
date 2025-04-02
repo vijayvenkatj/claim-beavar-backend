@@ -2,11 +2,10 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ClaimAssessment, ClaimAssessmentSchema } from "../utils/types";
 import { StructuredOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { UserDetails } from "../database_functions/UserDetails";
-import { InsurancePolicyDetailsByClaim } from "../database_functions/InsurancePolicyDetails";
 import { claimSpecificDetails, getClaimDetailsById } from "../database_functions/ClaimDetails";
 import { CreateClaimAssessment } from "../database_functions/ClaimAssessment";
 import { prisma } from "../utils/prisma/prisma";
+import { getInsurancePolicyDetails, getUserDetails } from "./helperFunctions";
 
 const model = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash",
@@ -37,13 +36,16 @@ const load_chain = async () => {
     const prompt = load_prompt();
     return prompt.pipe(model).pipe(parser);
 }
+ 
 
 const assess_claim = async(claimId: string): Promise<ClaimAssessment> => {
     const chain = await load_chain();
 
     const claimData = await getClaimDetailsById(claimId);
-    const userDetails = await UserDetails(claimData.policyHolderId);
-    const policyDetails = await InsurancePolicyDetailsByClaim(claimData?.id!);
+
+    const userDetails = await getUserDetails(claimData?.policyHolderId!);
+    const policyDetails = await getInsurancePolicyDetails(claimData?.id!);
+
     const claimSpecificDetail = await claimSpecificDetails(claimData?.id!, claimData?.claimType!);
     
     const result:ClaimAssessment = await chain.invoke({claimData, userDetails, policyDetails,claimSpecificDetail,format_instructions: parser.getFormatInstructions()});

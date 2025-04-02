@@ -1,19 +1,15 @@
 import express from 'express'
 import cors from 'cors'
-import { UserDetails } from './database_functions/UserDetails';
 import { chatRouter } from './chat/chatRouter';
 import { claimRouter } from './claim_analysis/claimRouter';
-
-
+import { connectRedis } from './utils/redis/init';
 
 const app = express();
 
-app.use(cors({
-  origin: "*"
-}));
-
+app.use(cors({origin: "*"}));
 app.use(express.json());
 
+connectRedis();
 
 app.get('/', async(req, res) => {
   res.send("You are in the backend of Claim Beavar !")
