@@ -8,6 +8,7 @@ import { LLMResponseSchema } from "../utils/types";
 import { UserDetails } from "../database_functions/UserDetails";
 import { getClaimDetails } from "../database_functions/ClaimDetails";
 import { InsurancePolicyDetails } from "../database_functions/InsurancePolicyDetails";
+import { retriever } from "../context_feeder/retriever";
 
 const memory = new BufferMemory()
 
@@ -25,6 +26,7 @@ const load_prompt = () => {
     raised by members. Answer Briefly. Make sure you are speaking like a human. Based on the member data, claim data, policy data answer the user's message:
 
     previous_chat : {previous_chat}
+    retrieved_context : {retrieved_context}
     
     Member Data : {memberData}
     Claim Data : {claimData}
@@ -46,11 +48,13 @@ const load_chain = async () => {
 export async function process_claims({userId,message}:{userId:string,message:string}): Promise<string> {
     try {
         const chain = await load_chain();
+        const retrievedData = await retriever(message);
         await memory.chatHistory.addMessage(new HumanMessage(message));
         const PolicyHolderData = await UserDetails(userId);
         const ClaimData = await getClaimDetails(userId);
         const InsurancePolicies = await InsurancePolicyDetails();
         const response = await chain.invoke({
+            retrieved_context: retrievedData,
             memberData: PolicyHolderData,
             claimData: ClaimData,
             policies: InsurancePolicies,

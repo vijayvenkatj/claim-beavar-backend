@@ -3,6 +3,7 @@ import cors from 'cors'
 import { chatRouter } from './chat/chatRouter';
 import { claimRouter } from './claim_analysis/claimRouter';
 import { connectRedis } from './utils/redis/init';
+import { pdfloader } from './context_feeder/loader';
 
 const app = express();
 
@@ -10,6 +11,8 @@ app.use(cors({origin: "*"}));
 app.use(express.json());
 
 connectRedis();
+pdfloader();
+console.log("Loadeed")
 
 app.get('/', async(req, res) => {
   res.send("You are in the backend of Claim Beavar !")
